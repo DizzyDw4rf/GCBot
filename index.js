@@ -4,7 +4,7 @@ const bot = new Discord.Client();
 const ms = require('ms');
 const ytdl = require('ytdl-core');
 
-const token = 'NjQyODgwNDkxODA4MzU4NDQx.XcgiAQ.Nge_bpIZOL7p7peOlonOxwnvX_w';
+const token = 'NjQyODgwNDkxODA4MzU4NDQx.XeFZgw.E0_qxmcLFkJUclMElSAQlahGzLY';
 
 const PREFIX = '!gc';
 
