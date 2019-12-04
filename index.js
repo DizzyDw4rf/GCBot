@@ -192,11 +192,9 @@ bot.on('message', message => {
             .addField('Music commands', '`play`  `skip`  `stop` {play} command must contain link!' )
             message.channel.sendEmbed(embed); 
             break;
-        case 'thats':
-            if(!message.member.roles.find(r => r.name === "Hanter")) return message.reply('You are not Hanter')
-            const attachment  = new Attachment('./B01KbFX.gif')
-            message.channel.send(message.author, attachment);
-            message.channel.send('what she said !').then(message.react('😂'))
+        case 'helpmute':
+            const helpmute = new Discord.RichEmbed
+            .setTitle
             break;       
          
     }   
