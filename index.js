@@ -1,12 +1,25 @@
-const Discord = require('discord.js');
+const http = require('http');
+const express = require('express');
+const app = express();
+app.get("/", (request, response) => {
+  response.sendStatus(200);
+});
+app.listen(process.env.PORT);
+setInterval(() => {
+  http.get(`http://.glitch.me/`);
+}, 280000);
+
+const Discord = require('discord.js');  
+const bot = new Discord.Client();  
 const {Client, Attachment} = require('discord.js');
-const bot = new Discord.Client();
-const ms = require('ms');
+const moment = require('moment');
+const zalgo = require('zalgolize');  
+const math = require('math-expression-evaluator');   
+const figlet = require('figlet');   
+const fs = require('fs'); 
 const ytdl = require('ytdl-core');
-
-const token = 'Your_secret_token';
-
-const PREFIX = '!gc';
+const ms = require('ms');  
+const PREFIX = '!gc'
 
 var version = '1.0.3';
 
@@ -39,6 +52,14 @@ bot.on('message', message => {
             .then(msg => msg.delete(4000))
             if(!args[1]) return message.reply('Please put number of messages')
             message.channel.bulkDelete(args[1]);
+            message.channel.sendMessage("", {embed: {
+          title: "Chat has been deleted",
+          color: 0x40e0d0, 
+          footer: {
+            
+          }
+        }}).then(msg => {msg.delete(5000)});
+                            
             break;
         case 'kick':
             if(!message.member.roles.find(r => r.name === "MANAGMENT")) return message.reply('You do not have perms')
@@ -107,7 +128,7 @@ bot.on('message', message => {
          person.removeRole(mainrole)
          person.addRole(muterole)
 
-         message.channel.send(`@${person.user.tag} has now been muted for ${ms(ms(time))}`)
+         message.channel.send(`@${person.user.tag} has now been muted🤐 for ${ms(ms(time))}`)
 
           setTimeout(function(){
             person.addRole(mainrole)
@@ -180,36 +201,136 @@ bot.on('message', message => {
             
             if(message.guild.connection) message.guild.voiceConnection.disconnect();
 
-
             break;
+      case 'thats':
+        message.channel.send('what she said ').then(message.react('😂'))
+        break;
+        //help members to know how commands work
         case 'help':
-            const embed = new Discord.RichEmbed()
+            const help = new Discord.RichEmbed()
             .setTitle('Commands you can use')
             .setColor(0x40e0d0)
             .setDescription('This commands need prefix `help `  `ping`  `info`')
-            .addField('MODS commands', '`clear`  `kick`  `ban`  `mute`')
+            .addField('MODS commands', '`clear`  `kick`  `ban`  `mute` `mutechannel` `unmutechannel`')
             .addField('This commands don\'t need prefix', '`avatar`   `HELLO`')
             .addField('Music commands', '`play`  `skip`  `stop` {play} command must contain link!' )
-            message.channel.sendEmbed(embed); 
+            .addField('If you want to know about spacific command', '`!gchelp<command>`')
+            message.channel.sendEmbed(help); 
             break;
         case 'helpmute':
-            const helpmute = new Discord.RichEmbed
-            .setTitle
-            break;       
-         
-    }   
-
-    if(message.content === 'avatar'){
-        message.reply(message.author.avatarURL);
+           const helpmute = new Discord.RichEmbed()
+           .setTitle('How to use mute command!')
+           .addField('to mute a member', '`!gcmute <@member> <time>`' )
+           .setColor(0x40e0d0)
+           message.channel.sendEmbed(helpmute);
+           break;
+      case 'helpkick':
+        const helpkick = new Discord.RichEmbed()
+        .setTitle('How to Kick a member!')
+        .addField('Just type like this', '`!gckick <@member>`')
+        .setColor(0x40e0d0)
+        message.channel.sendEmbed(helpkick);
+        break;
+      case 'helpban':
+        const helpban = new Discord.RichEmbed()
+        .setTitle('how to Ban a member!')
+        .addField('just type like this', '`!gcban <@member>`')
+        .setColor(0x40e0d0)
+        message.channel.sendEmbed(helpban)
+        break;
+      case 'helpmutechannel':
+        const hmc = new Discord.RichEmbed()
+        .setTitle('mutechannel command')
+        .setDescription('the mod can use this command to mute the whole chat ')
+        .setColor(0x40e0d0)
+        .addField('you can mute any channel like this', '`!gcmutechannel`')
+        message.channel.sendEmbed(hmc)
+        break;
+      case 'helpunmutechannel':
+        const humc = new Discord.RichEmbed()
+        .setTitle('unmutechannel command')
+        .setColor(0x40e0d0)
+        .addField('type this to unmute channel', '`!gcunmutechannel`')
+        message.channel.sendEmbed(humc)
+        break;
+    //another commands with bot.on(message) sitiuation
     }
 
     if(message.content === 'HELLO'){
-        message.reply('HELLO world!').then(message.react('👋'))
-    }
-    if(message.content === 'what is my age'){
-        message.reply('who cares any way!')
+        message.channel('HELLO world!').then(message.react('👋'))
     }
     
 });
+bot.on('message', message => {
+  const PREFIX = "!gc";
+       if(message.content === PREFIX + "mutechannel") {
+                           if(!message.channel.guild) return message.reply('** This command only for servers**');
 
-bot.login(token);
+   if(!message.member.roles.find(r => r.name === "MANAGMENT")) return message.reply('You do not have perms')
+              message.channel.overwritePermissions(message.guild.id, {
+            SEND_MESSAGES: false
+
+              }).then(() => {
+                  message.reply("**The chat has been muted🤐**")
+              });
+                }
+
+    if(message.content === PREFIX + "unmutechannel") {
+                        if(!message.channel.guild) return message.reply('** This command only for servers**');
+
+   if(!message.member.roles.find(r => r.name === "MANAGMENT")) return message.reply('You do not have perms')
+              message.channel.overwritePermissions(message.guild.id, {
+            SEND_MESSAGES: true
+
+              }).then(() => {
+                  message.reply("**The chat has been unmuted🙂**")
+              });
+    }
+       
+});
+bot.on('message', message => { 
+                                if(!message.channel.guild) return;
+                        if (message.content.startsWith(PREFIX + 'ping')) {
+                            if(!message.channel.guild) return;
+                            var msg = `${Date.now() - message.createdTimestamp}`
+                            var api = `${Math.round(bot.ping)}`
+                            if (message.author.bot) return;
+                        let PING = new Discord.RichEmbed()
+                        .setAuthor(message.author.username,message.author.avatarURL)
+                        .setColor(0x40e0d0)
+                        .addField('**Time Taken:**',msg + " ms :signal_strength: ")
+                        .addField('**WebSocket:**',api + " ms :signal_strength: ")
+                        .setTimestamp()
+        message.channel.sendEmbed(PING);
+     }
+});
+bot.on('message', message => {
+    if (message.content.startsWith("avatar")) {
+if(!message.channel.guild) return;
+        var mentionned = message.mentions.users.first();
+    var client;
+      if(mentionned){
+          var client = mentionned; } else {
+          var client = message.author;
+      }
+        const avtr = new Discord.RichEmbed()
+                           .addField('Requested by:', "<@" + message.author.id + ">")
+        .setColor(0x40e0d0)
+        .setImage(`${client.avatarURL}`)
+        .setTimestamp()
+      message.channel.sendEmbed(avtr);
+    }
+});
+
+bot.on('message', message => {
+   if (message.content.startsWith("what is my age")) {
+                if(!message.channel.guild) return message.reply('** This command only for servers**');
+ const age = ["Who cares any way!😒" ,"I'm sorry i don't know your age!😔" ,"Even you don't know your age how can i know it!🤣", "The age is not important, hurt is important♥️"]
+  var ge = new Discord.RichEmbed()
+  .setColor(0x40e0d0) 
+ .addField('i will say that' ,
+  `${age[Math.floor(Math.random() * age.length)]}`)
+  message.channel.sendEmbed(ge);
+    }
+});
+bot.login(process.env.TOKEN);
